@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spring-boot-api
-  namespace: devsecops-demo
+  namespace: l3ti-me20-dev
 spec:
   replicas: 1
   selector:
