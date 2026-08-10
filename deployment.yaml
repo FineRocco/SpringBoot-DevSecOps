@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-api
+  namespace: devsecops-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-boot-api
+  template:
+    metadata:
+      labels:
+        app: spring-boot-api
+    spec:
+      containers:
+      - name: spring-boot-api
+        image: https://desiree-wiry-splashily.ngrok-free.dev/enterprise-app:latest 
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_CLOUD_VAULT_HOST
+          value: "host.docker.internal"
+        - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+          value: "http://host.docker.internal:9090/realms/enterprise-realm"
