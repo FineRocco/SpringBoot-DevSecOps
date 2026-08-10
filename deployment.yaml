@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: spring-boot-api
-        image: https://desiree-wiry-splashily.ngrok-free.dev/enterprise-app:latest 
+        image: desiree-wiry-splashily.ngrok-free.dev/enterprise-app:latest 
         ports:
         - containerPort: 8080
         env:
