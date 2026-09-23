@@ -2,24 +2,23 @@ FROM eclipse-temurin:17-jdk-alpine AS builder
 
 WORKDIR /app
 
-COPY gradlew .
-COPY gradle/ gradle/
-COPY build.gradle .
-COPY settings.gradle .
+COPY mvnw .
+COPY .mvn/ .mvn/
+COPY pom.xml .
 
-RUN chmod +x gradlew
-
-RUN ./gradlew dependencies --no-daemon
+RUN chmod +x mvnw
+RUN ./mvnw dependency:go-offline
 
 COPY src/ src/
 
-RUN ./gradlew clean build -x test --no-daemon
+RUN ./mvnw clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.jar app.jar
+# Maven output is in the target/ directory
+COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 

@@ -12,8 +12,8 @@ pipeline {
             steps {
                 echo 'Compiling Spring Boot Application...'
                 // Ensure the wrapper is executable, then build
-                sh 'chmod +x gradlew'
-                sh './gradlew clean build -x test --no-daemon'
+                sh 'chmod +x mvnw'
+                sh './mvnw clean package -DskipTests'
             }
         }
 

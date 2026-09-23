@@ -20,7 +20,7 @@ This project is a modern, cloud-native Enterprise Java application built with **
 *   **Spring Cloud Vault (HashiCorp Vault)**: Secure, centralized storage for dynamic secrets and application properties.
 
 ### **DevOps, CI/CD, & Containerization**
-*   **Gradle**: Build automation tool.
+*   **Maven**: Build automation tool.
 *   **Docker**: Multi-stage builds using lightweight Alpine Linux images to package the application as an immutable artifact.
 *   **Jenkins**: Automation server handling the declarative CI/CD pipeline (`Jenkinsfile`).
 *   **Sonatype Nexus**: Private container registry used to securely store Docker images.
@@ -36,7 +36,7 @@ The core of the system is a Spring Boot application. It exposes RESTful endpoint
 
 ### 2. The DevSecOps Pipeline
 The automation logic is defined in a `Jenkinsfile` and consists of several stages:
-1.  **Compile & Unit Test**: Jenkins pulls the code and uses the Gradle wrapper to compile the Java 17 source code and run unit tests.
+1.  **Compile & Unit Test**: Jenkins pulls the code and uses the Maven wrapper to compile the Java 17 source code and run unit tests.
 2.  **Security Gate (IAM Validation)**: Before building the artifact, the pipeline explicitly tests the connection to Keycloak by requesting a client credentials grant token. If Keycloak fails to issue a token, the pipeline aborts.
 3.  **Package Immutable Artifact**: Uses a multi-stage `Dockerfile`. It first compiles the `.jar` using an Eclipse Temurin JDK image, then copies only the compiled artifact into a lightweight JRE Alpine image to reduce the attack surface and image size.
 4.  **Artifact Storage**: The newly minted Docker image is tagged with the Jenkins build number and pushed to a secure Sonatype Nexus repository.
@@ -52,11 +52,11 @@ Since this is an enterprise-scale architecture, running it locally requires seve
 2.  **Configure Keycloak**: Set up a realm named `enterprise-realm` and a client named `spring-boot-api`.
 3.  **Build the App**:
     ```bash
-    ./gradlew clean build
+    ./mvnw clean package
     ```
 4.  **Run Locally**:
     ```bash
-    java -jar build/libs/enterprise-platform-0.0.1-SNAPSHOT.jar
+    java -jar target/enterprise-platform-0.0.1-SNAPSHOT.jar
     ```
 
 *(More detailed setup instructions for the infrastructure components will be added as the project progresses).*
