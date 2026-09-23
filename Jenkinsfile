@@ -61,15 +61,10 @@ pipeline {
             }
         }
 
-        stage('Continuous Deployment: Ansible Push to OpenShift') {
-            environment {
-                OPENSHIFT_SERVER = 'https://api.rm2.thpm.p1.openshiftapps.com:6443'
-            }
+        stage('Continuous Deployment: Ansible Local Docker Deploy') {
             steps {
-                echo 'Initiating Push-Based CD via Ansible...'
-                withCredentials([string(credentialsId: 'openshift-token', variable: 'OPENSHIFT_TOKEN')]) {
-                    sh 'ansible-playbook cd-deploy.yml'
-                }
+                echo 'Initiating Push-Based CD to Local Docker via Ansible...'
+                sh 'ansible-playbook cd-deploy.yml'
             }
         }
     }

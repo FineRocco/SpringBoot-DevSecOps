@@ -1,24 +1,18 @@
 ---
-- name: Push-Based CD Deployment to OpenShift
+- name: Push-Based CD Deployment to Local Docker
   hosts: localhost
   connection: local
   gather_facts: false
 
   tasks:
-    - name: Apply Spring Boot Deployment Manifest
-      kubernetes.core.k8s:
-        host: "{{ lookup('env', 'OPENSHIFT_SERVER') }}"
-        api_key: "{{ lookup('env', 'OPENSHIFT_TOKEN') }}"
-        validate_certs: no
-        state: present
-        src: deployment.yaml
-        namespace: l3ti-me20-dev
-
-    - name: Apply Spring Boot Service Manifest
-      kubernetes.core.k8s:
-        host: "{{ lookup('env', 'OPENSHIFT_SERVER') }}"
-        api_key: "{{ lookup('env', 'OPENSHIFT_TOKEN') }}"
-        validate_certs: no
-        state: present
-        src: service.yaml
-        namespace: l3ti-me20-dev
+    - name: Ensure the Spring Boot application container is running
+      community.docker.docker_container:
+        name: enterprise-app-container
+        image: "{{ lookup('env', 'NEXUS_REGISTRY') }}/{{ lookup('env', 'IMAGE_NAME') }}:{{ lookup('env', 'BUILD_NUMBER') | default('latest') }}"
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
+        env:
+          SPRING_CLOUD_VAULT_HOST: "host.docker.internal"
+          SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://host.docker.internal:9090/realms/enterprise-realm"
