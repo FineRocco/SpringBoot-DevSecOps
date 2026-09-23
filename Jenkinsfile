@@ -1,8 +1,11 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     environment {
-        // We use host.docker.internal so the Jenkins container can securely route traffic to your Windows network
         NEXUS_REGISTRY = 'host.docker.internal:8082'
         IMAGE_NAME = 'enterprise-app'
     }
@@ -11,7 +14,6 @@ pipeline {
         stage('Compile & Unit Test') {
             steps {
                 echo 'Compiling Spring Boot Application...'
-                // Ensure the wrapper is executable, then build
                 sh 'chmod +x mvnw'
                 sh './mvnw clean package -DskipTests'
             }
@@ -20,7 +22,6 @@ pipeline {
         stage('Security Gate: IAM Token Validation') {
             steps {
                 echo 'Testing Keycloak Identity Provider connection...'
-                // This explicitly measures the integration latency and efficiency of the IAM security gate
                 withCredentials([string(credentialsId: 'keycloak-secret', variable: 'KC_SECRET')]) {
                     script {
                         def response = sh(script: '''
@@ -44,7 +45,6 @@ pipeline {
         stage('Package Immutable Artifact') {
             steps {
                 echo 'Building Multi-Stage Docker Image...'
-                // We tag it with the unique Jenkins Build Number for version control, and also as 'latest'
                 sh "docker build -t ${NEXUS_REGISTRY}/${IMAGE_NAME}:${env.BUILD_NUMBER} ."
                 sh "docker tag ${NEXUS_REGISTRY}/${IMAGE_NAME}:${env.BUILD_NUMBER} ${NEXUS_REGISTRY}/${IMAGE_NAME}:latest"
             }
