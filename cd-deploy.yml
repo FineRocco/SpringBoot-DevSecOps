@@ -15,5 +15,5 @@
           - "8088:8080"
         env:
           SPRING_CLOUD_VAULT_HOST: "host.docker.internal"
-          SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://host.docker.internal:9090/realms/enterprise-realm"
+          SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: "http://host.docker.internal:9090/realms/enterprise-realm/protocol/openid-connect/certs"
           SPRING_DATASOURCE_URL: "jdbc:postgresql://host.docker.internal:5432/userdb"
